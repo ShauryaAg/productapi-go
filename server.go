@@ -1,17 +1,27 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"os"
 	"time"
 
-	"github.com/go-chi/chi/v5"
+	"github.com/ShauryaAg/ProductAPI/models/db"
+	"github.com/ShauryaAg/ProductAPI/routes"
 	"github.com/rs/cors"
 )
 
 func main() {
-	r := chi.NewRouter()
+	r := routes.GetRoutes()
+
+	client, err := db.InitDatabase("mongo", context.Background())
+	defer client.Disconnect(context.Background())
+	if err != nil {
+		log.Fatal("errrrr", err)
+	}
+
+	db.DBCon = client.Database("mongo")
 
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
@@ -30,5 +40,4 @@ func main() {
 	}
 
 	log.Fatal(srv.ListenAndServe())
-
 }
