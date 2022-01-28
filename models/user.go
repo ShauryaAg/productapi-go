@@ -11,7 +11,7 @@ type User struct {
 	Id       primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
 	Name     string             `json:"name" bson:"name"`
 	Password string             `json:"password" bson:"password"`
-	Email    string             `json:"email" bson:"email"`
+	Email    string             `json:"email" bson:"email" mongo:"index,unique"`
 	IsActive bool               `json:"is_active" bson:"is_active"`
 }
 
