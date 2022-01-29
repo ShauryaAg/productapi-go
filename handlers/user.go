@@ -26,8 +26,11 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 	ct := r.Header.Get("content-type")
 	if !strings.Contains(ct, "application/json") {
-		w.WriteHeader(http.StatusUnsupportedMediaType)
-		w.Write([]byte(fmt.Sprintf("Need content-type: 'application/json', but got %s", ct)))
+		utils.Error(
+			w, r,
+			fmt.Sprintf("Need content-type: 'application/json', but got %s", ct),
+			http.StatusUnsupportedMediaType,
+		)
 		return
 	}
 
@@ -82,8 +85,11 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	ct := r.Header.Get("content-type")
 	if !strings.Contains(ct, "application/json") {
-		w.WriteHeader(http.StatusUnsupportedMediaType)
-		w.Write([]byte(fmt.Sprintf("Need content-type: 'application/json', but got %s", ct)))
+		utils.Error(
+			w, r,
+			fmt.Sprintf("Need content-type: 'application/json', but got %s", ct),
+			http.StatusUnsupportedMediaType,
+		)
 		return
 	}
 	err = json.Unmarshal(bodyBytes, &data)
@@ -95,8 +101,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	err = db.Models["user"].FindOne(r.Context(), bson.M{"email": data["email"]}).Decode(&user)
 	if err != nil {
 		fmt.Println("err", err)
-		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(err.Error()))
+		utils.Error(w, r, err.Error(), http.StatusNotFound)
 		return
 	}
 
@@ -109,8 +114,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	} else {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Email/Password is incorrect"))
+		utils.Error(w, r, "Email/Password is incorrect", http.StatusBadRequest)
 		return
 	}
 
