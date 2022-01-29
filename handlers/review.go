@@ -59,7 +59,7 @@ func CreateReview(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	review.Reviewer = user
+	review = *models.NewReview(review.Text, review.Rating, user)
 	result, err := db.Models["review"].InsertOne(r.Context(), review)
 	if err != nil {
 		fmt.Println("err", err)

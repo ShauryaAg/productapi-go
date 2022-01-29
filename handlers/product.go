@@ -39,7 +39,7 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	product.Reviews = make([]models.Review, 0)
+	product = *models.NewProduct(product.Name, product.Description, product.ThumbnailImageUrl)
 	result, err := db.Models["product"].InsertOne(r.Context(), product)
 	if err != nil {
 		fmt.Println("err", err)

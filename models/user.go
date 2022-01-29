@@ -15,6 +15,19 @@ type User struct {
 	IsActive bool               `json:"is_active" bson:"is_active"`
 }
 
+func NewUser(name, email, password string) *User {
+	user := &User{
+		Id:       primitive.NewObjectID(),
+		Name:     name,
+		Email:    email,
+		Password: password,
+	}
+
+	user.HashPassword()
+
+	return user
+}
+
 func (u *User) HashPassword() error {
 	hash, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
 	if err != nil {

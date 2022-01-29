@@ -40,8 +40,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user.Id = primitive.NewObjectID()
-	user.HashPassword()
+	user = *models.NewUser(user.Name, user.Email, user.Password)
 	result, err := db.Models["user"].InsertOne(r.Context(), user)
 	if err != nil {
 		fmt.Println("err", err)
