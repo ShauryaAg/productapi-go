@@ -122,9 +122,10 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	jsonBytes, err := json.Marshal(struct {
 		Id    primitive.ObjectID
+		Name  string
 		Email string
 		Token string
-	}{user.Id, user.Email, token})
+	}{user.Id, user.Name, user.Email, token})
 	if err != nil {
 		fmt.Println("err", err)
 		w.WriteHeader(http.StatusBadRequest)
@@ -156,7 +157,11 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	jsonBytes, err := json.Marshal(user)
+	jsonBytes, err := json.Marshal(struct {
+		Id    primitive.ObjectID
+		Name  string
+		Email string
+	}{user.Id, user.Name, user.Email})
 	if err != nil {
 		fmt.Println("err", err)
 		w.WriteHeader(http.StatusBadRequest)

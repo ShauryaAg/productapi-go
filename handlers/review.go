@@ -90,7 +90,10 @@ func CreateReview(w http.ResponseWriter, r *http.Request) {
 
 	res := db.Models["product"].FindOneAndUpdate(r.Context(),
 		bson.M{"_id": productObjectId},
-		bson.M{"$push": bson.M{"reviews": review}},
+		bson.M{
+			"$push": bson.M{"reviews": review},
+			"$inc":  bson.M{"ratingCount": 1, "ratingSum": review.Rating},
+		},
 	)
 	if res.Err() != nil {
 		fmt.Println("err", res.Err().Error())

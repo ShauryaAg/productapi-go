@@ -8,6 +8,8 @@ type Product struct {
 	Description       string             `json:"description" bson:"description"`
 	ThumbnailImageUrl string             `json:"thumbnail" bson:"thumbnail"`
 	Reviews           []Review           `json:"reviews" bson:"reviews"`
+	RatingSum         float64            `json:"ratingSum" bson:"ratingSum"`
+	RatingCount       int                `json:"ratingCount" bson:"ratingCount"`
 }
 
 func NewProduct(name, description, thumbnailImageUrl string) *Product {
@@ -17,5 +19,14 @@ func NewProduct(name, description, thumbnailImageUrl string) *Product {
 		Description:       description,
 		ThumbnailImageUrl: thumbnailImageUrl,
 		Reviews:           make([]Review, 0),
+		RatingSum:         0,
+		RatingCount:       0,
 	}
+}
+
+func (p Product) Rating() float64 {
+	if p.RatingCount == 0 {
+		return 0
+	}
+	return p.RatingSum / float64(p.RatingCount)
 }

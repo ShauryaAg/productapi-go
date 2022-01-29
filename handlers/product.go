@@ -82,7 +82,26 @@ func SearchProducts(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	jsonBytes, err := json.Marshal(products)
+	type productResult struct {
+		Id                primitive.ObjectID
+		Name              string
+		Description       string
+		ThumbnailImageUrl string
+		Rating            float64
+	}
+
+	var productResults []productResult
+	for _, product := range products {
+		productResults = append(productResults, productResult{
+			Id:                product.Id,
+			Name:              product.Name,
+			Description:       product.Description,
+			ThumbnailImageUrl: product.ThumbnailImageUrl,
+			Rating:            product.Rating(),
+		})
+	}
+
+	jsonBytes, err := json.Marshal(productResults)
 	if err != nil {
 		fmt.Println("err", err)
 		w.WriteHeader(http.StatusInternalServerError)
