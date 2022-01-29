@@ -15,8 +15,9 @@ import (
 func main() {
 	r := routes.GetRoutes()
 
-	client, err := db.InitDatabase("mongo", context.Background())
-	defer client.Disconnect(context.Background())
+	ctx := context.Background()
+	client, err := db.InitDatabase("mongo", ctx)
+	defer client.Disconnect(ctx)
 	if err != nil {
 		log.Fatal("errrrr", err)
 	}
