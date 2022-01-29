@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"reflect"
+	"regexp"
 	"strings"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -29,33 +30,56 @@ func Migrate(ctx context.Context, db *mongo.Database, models ...interface{}) (ma
 			}
 		}
 
-		collections[modelName] = db.Collection(modelName)
+		collection := db.Collection(modelName)
+		collections[modelName] = collection
 
+	loop:
 		for i := 0; i < modelType.NumField(); i++ {
 			field := modelType.Field(i)
-			fieldOptions := strings.Split(field.Tag.Get("mongo"), ",")
+			fieldName := strings.ToLower(field.Name)
+			fieldTag := field.Tag.Get("mongo")
+			fieldOptions := strings.Split(fieldTag, ",")
 
-		loop:
+			if len(fieldOptions) == 0 {
+				continue loop
+			}
+
+			// check if index exists already
+			indexes, err := collection.Indexes().ListSpecifications(ctx)
+			if err != nil {
+				return nil, err
+			}
+
+			re := regexp.MustCompile(fmt.Sprintf(`^%s_\d+`, fieldName))
+			for _, index := range indexes {
+				if re.Match([]byte(index.Name)) {
+					continue loop
+				}
+				var unique = true
+				if index.Unique == nil {
+					unique = false
+				}
+				if (unique) && (strings.Contains(fieldTag, "unique")) {
+					continue loop
+				}
+			}
+
+			indexOptions := options.Index()
 			for _, option := range fieldOptions {
 				switch option {
 				case "unique":
-					_, err := db.Collection(modelName).Indexes().CreateOne(ctx, mongo.IndexModel{
-						Keys:    bson.M{fmt.Sprintf("%s_unique_index", field.Name): 1},
-						Options: options.Index().SetUnique(true),
-					})
-					if err != nil {
-						return nil, err
-					}
-					break loop
-				case "index":
-					_, err := db.Collection(modelName).Indexes().CreateOne(ctx, mongo.IndexModel{
-						Keys:    bson.M{fmt.Sprintf("%s_index", field.Name): 1},
-						Options: options.Index(),
-					})
-					if err != nil {
-						return nil, err
-					}
+					indexOptions = indexOptions.SetUnique(true)
+				case "sparse":
+					indexOptions = indexOptions.SetSparse(true)
+					// TODO: add more options for max,min,expire
 				}
+			}
+			_, err = collection.Indexes().CreateOne(ctx, mongo.IndexModel{
+				Keys:    bson.M{fieldName: 1},
+				Options: indexOptions,
+			})
+			if err != nil {
+				return nil, err
 			}
 		}
 	}
