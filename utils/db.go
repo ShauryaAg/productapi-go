@@ -17,7 +17,7 @@ func Migrate(ctx context.Context, db *mongo.Database, models ...interface{}) (ma
 		modelType := reflect.TypeOf(model)
 		modelName := strings.ToLower(modelType.Name())
 
-		exists, err := collectionExists(db, modelName)
+		exists, err := collectionExists(ctx, db, modelName)
 		if err != nil {
 			return nil, err
 		}
@@ -62,8 +62,8 @@ func Migrate(ctx context.Context, db *mongo.Database, models ...interface{}) (ma
 	return collections, nil
 }
 
-func collectionExists(db *mongo.Database, collection string) (bool, error) {
-	names, err := db.ListCollectionNames(context.TODO(), bson.M{})
+func collectionExists(ctx context.Context, db *mongo.Database, collection string) (bool, error) {
+	names, err := db.ListCollectionNames(ctx, bson.M{})
 	if err != nil {
 		return false, err
 	}
