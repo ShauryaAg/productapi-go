@@ -15,6 +15,9 @@ import (
 )
 
 func CreateReview(w http.ResponseWriter, r *http.Request) {
+	var review *models.Review = &models.Review{}
+	var user models.User
+
 	userId := r.Header.Get("decoded")
 
 	bodyBytes, err := ioutil.ReadAll(r.Body)
@@ -32,9 +35,7 @@ func CreateReview(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(fmt.Sprintf("Need content-type: 'application/json', but got %s", ct)))
 		return
 	}
-
-	var review models.Review
-	err = json.Unmarshal(bodyBytes, &review)
+	err = json.Unmarshal(bodyBytes, review)
 	if err != nil {
 		fmt.Println("err", err)
 		w.WriteHeader(http.StatusBadRequest)
@@ -42,7 +43,6 @@ func CreateReview(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var user models.User
 	userObjectId, err := primitive.ObjectIDFromHex(userId)
 	if err != nil {
 		fmt.Println("err", err)
@@ -59,8 +59,15 @@ func CreateReview(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	review = *models.NewReview(review.Text, review.Rating, user)
-	result, err := db.Models["review"].InsertOne(r.Context(), review)
+	review, err = models.NewReview(review.Text, review.Rating, user)
+	if err != nil {
+		fmt.Println("err", err)
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	reviewResult, err := db.Models["review"].InsertOne(r.Context(), review)
 	if err != nil {
 		fmt.Println("err", err)
 		w.WriteHeader(http.StatusBadRequest)
@@ -70,7 +77,7 @@ func CreateReview(w http.ResponseWriter, r *http.Request) {
 
 	jsonBytes, err := json.Marshal(struct {
 		Id primitive.ObjectID
-	}{result.InsertedID.(primitive.ObjectID)})
+	}{reviewResult.InsertedID.(primitive.ObjectID)})
 	if err != nil {
 		fmt.Println("err", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -78,7 +85,7 @@ func CreateReview(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	review.Id = result.InsertedID.(primitive.ObjectID)
+	review.Id = reviewResult.InsertedID.(primitive.ObjectID)
 	productId := chi.URLParam(r, "productId")
 	productObjectId, err := primitive.ObjectIDFromHex(productId)
 	if err != nil {
@@ -88,17 +95,17 @@ func CreateReview(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res := db.Models["product"].FindOneAndUpdate(r.Context(),
+	productResult := db.Models["product"].FindOneAndUpdate(r.Context(),
 		bson.M{"_id": productObjectId},
 		bson.M{
 			"$push": bson.M{"reviews": review},
 			"$inc":  bson.M{"ratingCount": 1, "ratingSum": review.Rating},
 		},
 	)
-	if res.Err() != nil {
-		fmt.Println("err", res.Err().Error())
+	if productResult.Err() != nil {
+		fmt.Println("err", productResult.Err().Error())
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(res.Err().Error()))
+		w.Write([]byte(productResult.Err().Error()))
 		return
 	}
 

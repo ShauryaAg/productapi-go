@@ -14,6 +14,8 @@ import (
 )
 
 func CreateProduct(w http.ResponseWriter, r *http.Request) {
+	var product *models.Product = &models.Product{}
+
 	bodyBytes, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
@@ -30,8 +32,7 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var product models.Product
-	err = json.Unmarshal(bodyBytes, &product)
+	err = json.Unmarshal(bodyBytes, product)
 	if err != nil {
 		fmt.Println("err", err)
 		w.WriteHeader(http.StatusBadRequest)
@@ -39,7 +40,14 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	product = *models.NewProduct(product.Name, product.Description, product.ThumbnailImageUrl)
+	product, err = models.NewProduct(product.Name, product.Description, product.ThumbnailImageUrl)
+	if err != nil {
+		fmt.Println("err", err)
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
 	result, err := db.Models["product"].InsertOne(r.Context(), product)
 	if err != nil {
 		fmt.Println("err", err)
@@ -64,7 +72,12 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
 }
 
 func SearchProducts(w http.ResponseWriter, r *http.Request) {
-	cursor, err := db.Models["product"].Find(r.Context(), bson.M{"name": bson.M{"$regex": r.URL.Query().Get("q")}})
+	var products []models.Product
+
+	cursor, err := db.Models["product"].Find(
+		r.Context(),
+		bson.M{"name": bson.M{"$regex": r.URL.Query().Get("q")}},
+	)
 	if err != nil {
 		fmt.Println("err", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -73,7 +86,6 @@ func SearchProducts(w http.ResponseWriter, r *http.Request) {
 	}
 	defer cursor.Close(r.Context())
 
-	var products []models.Product
 	err = cursor.All(r.Context(), &products)
 	if err != nil {
 		fmt.Println("err", err)

@@ -15,6 +15,8 @@ import (
 )
 
 func Register(w http.ResponseWriter, r *http.Request) {
+	var user *models.User = &models.User{}
+
 	bodyBytes, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
@@ -31,8 +33,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var user models.User
-	err = json.Unmarshal(bodyBytes, &user)
+	err = json.Unmarshal(bodyBytes, user)
 	if err != nil {
 		fmt.Println("err", err)
 		w.WriteHeader(http.StatusBadRequest)
@@ -40,7 +41,14 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user = *models.NewUser(user.Name, user.Email, user.Password)
+	user, err = models.NewUser(user.Name, user.Email, user.Password)
+	if err != nil {
+		fmt.Println("err", err)
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
 	result, err := db.Models["user"].InsertOne(r.Context(), user)
 	if err != nil {
 		fmt.Println("err", err)
@@ -49,7 +57,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := utils.CreateToken(user)
+	token, err := utils.CreateToken(*user)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -72,6 +80,9 @@ func Register(w http.ResponseWriter, r *http.Request) {
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
+	var data map[string]string
+	var user models.User
+
 	bodyBytes, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
@@ -87,8 +98,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(fmt.Sprintf("Need content-type: 'application/json', but got %s", ct)))
 		return
 	}
-
-	var data map[string]string
 	err = json.Unmarshal(bodyBytes, &data)
 	if err != nil {
 		fmt.Println("err", err)
@@ -97,7 +106,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var user models.User
 	err = db.Models["user"].FindOne(r.Context(), bson.M{"email": data["email"]}).Decode(&user)
 	if err != nil {
 		fmt.Println("err", err)
@@ -140,6 +148,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 // Get user details using JWT
 func GetUser(w http.ResponseWriter, r *http.Request) {
+	var user models.User
+
 	id := r.Header.Get("decoded")
 	objectId, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
@@ -149,7 +159,6 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var user models.User
 	err = db.Models["user"].FindOne(r.Context(), bson.M{"_id": objectId}).Decode(&user)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
