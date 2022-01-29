@@ -19,7 +19,7 @@ func main() {
 	client, err := db.InitDatabase("mongo", ctx)
 	defer client.Disconnect(ctx)
 	if err != nil {
-		log.Fatal("errrrr", err)
+		log.Fatal("err", err)
 	}
 
 	db.DBCon = client.Database("mongo")
