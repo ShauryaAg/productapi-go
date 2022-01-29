@@ -7,6 +7,8 @@ func GetRoutes() chi.Router {
 
 	r.Route("/api", func(r chi.Router) {
 		GetUserRoutes(r)
+		GetProductRoutes(r)
+		GetReviewRoutes(r)
 	})
 
 	return r

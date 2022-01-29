@@ -28,12 +28,12 @@ func InitDatabase(database string, ctx context.Context) (*mongo.Client, error) {
 		return nil, err
 	}
 
-	err = migrate(ctx, client.Database(database), models.User{})
+	err = migrate(ctx, client.Database(database), models.User{}, models.Product{}, models.Review{})
 	if err != nil {
 		return nil, err
 	}
 
-	Models = getCollections(*client.Database(database), "user")
+	Models = getCollections(*client.Database(database), "user", "product", "review")
 	return client, nil
 }
 
