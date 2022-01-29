@@ -9,6 +9,7 @@ import (
 
 	"github.com/ShauryaAg/ProductAPI/models"
 	"github.com/ShauryaAg/ProductAPI/models/db"
+	"github.com/ShauryaAg/ProductAPI/utils"
 	"github.com/go-chi/chi/v5"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -23,9 +24,7 @@ func CreateReview(w http.ResponseWriter, r *http.Request) {
 	bodyBytes, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
-		fmt.Println("err", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		utils.Error(w, r, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -37,41 +36,31 @@ func CreateReview(w http.ResponseWriter, r *http.Request) {
 	}
 	err = json.Unmarshal(bodyBytes, review)
 	if err != nil {
-		fmt.Println("err", err)
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		utils.Error(w, r, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	userObjectId, err := primitive.ObjectIDFromHex(userId)
 	if err != nil {
-		fmt.Println("err", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		utils.Error(w, r, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	err = db.Models["user"].FindOne(r.Context(), bson.M{"_id": userObjectId}).Decode(&user)
 	if err != nil {
-		fmt.Println("err", err)
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		utils.Error(w, r, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	review, err = models.NewReview(review.Text, review.Rating, user)
 	if err != nil {
-		fmt.Println("err", err)
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		utils.Error(w, r, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	reviewResult, err := db.Models["review"].InsertOne(r.Context(), review)
 	if err != nil {
-		fmt.Println("err", err)
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		utils.Error(w, r, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -79,9 +68,7 @@ func CreateReview(w http.ResponseWriter, r *http.Request) {
 		Id primitive.ObjectID
 	}{reviewResult.InsertedID.(primitive.ObjectID)})
 	if err != nil {
-		fmt.Println("err", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		utils.Error(w, r, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -89,9 +76,7 @@ func CreateReview(w http.ResponseWriter, r *http.Request) {
 	productId := chi.URLParam(r, "productId")
 	productObjectId, err := primitive.ObjectIDFromHex(productId)
 	if err != nil {
-		fmt.Println("err", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		utils.Error(w, r, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -103,9 +88,7 @@ func CreateReview(w http.ResponseWriter, r *http.Request) {
 		},
 	)
 	if productResult.Err() != nil {
-		fmt.Println("err", productResult.Err().Error())
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(productResult.Err().Error()))
+		utils.Error(w, r, productResult.Err().Error(), http.StatusInternalServerError)
 		return
 	}
 

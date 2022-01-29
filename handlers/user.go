@@ -20,9 +20,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	bodyBytes, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
-		fmt.Println("err", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		utils.Error(w, r, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -35,25 +33,19 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 	err = json.Unmarshal(bodyBytes, user)
 	if err != nil {
-		fmt.Println("err", err)
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		utils.Error(w, r, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	user, err = models.NewUser(user.Name, user.Email, user.Password)
 	if err != nil {
-		fmt.Println("err", err)
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		utils.Error(w, r, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	result, err := db.Models["user"].InsertOne(r.Context(), user)
 	if err != nil {
-		fmt.Println("err", err)
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		utils.Error(w, r, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -68,9 +60,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		Token string
 	}{result.InsertedID.(primitive.ObjectID), user.Email, token})
 	if err != nil {
-		fmt.Println("err", err)
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		utils.Error(w, r, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -86,9 +76,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	bodyBytes, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
-		fmt.Println("err", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		utils.Error(w, r, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -100,9 +88,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 	err = json.Unmarshal(bodyBytes, &data)
 	if err != nil {
-		fmt.Println("err", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		utils.Error(w, r, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -135,9 +121,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		Token string
 	}{user.Id, user.Name, user.Email, token})
 	if err != nil {
-		fmt.Println("err", err)
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		utils.Error(w, r, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -153,9 +137,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("decoded")
 	objectId, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		fmt.Println("err", err)
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		utils.Error(w, r, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -172,9 +154,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		Email string
 	}{user.Id, user.Name, user.Email})
 	if err != nil {
-		fmt.Println("err", err)
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		utils.Error(w, r, err.Error(), http.StatusBadRequest)
 		return
 	}
 

@@ -9,6 +9,7 @@ import (
 
 	"github.com/ShauryaAg/ProductAPI/models"
 	"github.com/ShauryaAg/ProductAPI/models/db"
+	"github.com/ShauryaAg/ProductAPI/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -19,40 +20,35 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
 	bodyBytes, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
-		fmt.Println("err", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		utils.Error(w, r, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	ct := r.Header.Get("content-type")
 	if !strings.Contains(ct, "application/json") {
-		w.WriteHeader(http.StatusUnsupportedMediaType)
-		w.Write([]byte(fmt.Sprintf("Need content-type: 'application/json', but got %s", ct)))
+		utils.Error(
+			w, r,
+			fmt.Sprintf("Need content-type: 'application/json', but got %s", ct),
+			http.StatusUnsupportedMediaType,
+		)
 		return
 	}
 
 	err = json.Unmarshal(bodyBytes, product)
 	if err != nil {
-		fmt.Println("err", err)
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		utils.Error(w, r, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	product, err = models.NewProduct(product.Name, product.Description, product.ThumbnailImageUrl)
 	if err != nil {
-		fmt.Println("err", err)
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		utils.Error(w, r, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	result, err := db.Models["product"].InsertOne(r.Context(), product)
 	if err != nil {
-		fmt.Println("err", err)
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		utils.Error(w, r, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -60,9 +56,7 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
 		Id primitive.ObjectID
 	}{result.InsertedID.(primitive.ObjectID)})
 	if err != nil {
-		fmt.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		utils.Error(w, r, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -79,18 +73,14 @@ func SearchProducts(w http.ResponseWriter, r *http.Request) {
 		bson.M{"name": bson.M{"$regex": r.URL.Query().Get("q")}},
 	)
 	if err != nil {
-		fmt.Println("err", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		utils.Error(w, r, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	defer cursor.Close(r.Context())
 
 	err = cursor.All(r.Context(), &products)
 	if err != nil {
-		fmt.Println("err", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		utils.Error(w, r, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -115,9 +105,7 @@ func SearchProducts(w http.ResponseWriter, r *http.Request) {
 
 	jsonBytes, err := json.Marshal(productResults)
 	if err != nil {
-		fmt.Println("err", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		utils.Error(w, r, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
