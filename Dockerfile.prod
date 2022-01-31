@@ -1,14 +1,14 @@
 # Start from golang base image
-FROM golang:latest
+FROM golang:alpine as builder
 
 # ENV GO111MODULE=on
 
 # Install git.
 # Git is required for fetching the dependencies.
-RUN apt update && apt install git
+RUN apk update && apk add --no-cache git
 
 # Set the current working directory inside the container 
-WORKDIR /root
+WORKDIR /app
 
 # Copy go mod and sum files 
 COPY go.mod go.sum ./
@@ -22,6 +22,15 @@ COPY . .
 # Build the Go app
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 
+# Start a new stage from scratch
+FROM alpine:latest
+
+WORKDIR /root/
+
+# Copy everything from the previous stage
+COPY --from=builder /app .
+
+# Expose port 8080 to the outside world
 EXPOSE 8080
 
 #Command to run the executable

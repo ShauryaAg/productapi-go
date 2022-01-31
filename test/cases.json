@@ -1,0 +1,265 @@
+[
+    {
+        "name": "CreateUserSuccess",
+        "endpoint": "/api/auth/register",
+        "method": "POST",
+        "handler": "REGISTER",
+        "inputHeaders": {},
+        "inputBody": {
+            "name": "Shaurya",
+            "email": "example@example.com",
+            "password": "password"
+        },
+        "expected": {
+            "status": 200,
+            "response": {
+                "Id": "Id",
+                "Email": "example@example.com",
+                "Token": "Token"
+            }
+        }
+    },
+    {
+        "name": "CreateUserAlreadyExists",
+        "endpoint": "/api/auth/register",
+        "handler": "REGISTER",
+        "method": "POST",
+        "inputHeaders": {},
+        "inputBody": {
+            "name": "Shaurya",
+            "email": "example@example.com",
+            "password": "password"
+        },
+        "expected": {
+            "status": 400,
+            "response": {
+                "Error": "write exception: write errors: [E11000 duplicate key error collection: test.user index: email_1 dup key: { email: \"example@example.com\" }]"
+            }
+        }
+    },
+    {
+        "name": "LoginUserSuccess",
+        "endpoint": "/api/auth/login",
+        "handler": "LOGIN",
+        "method": "POST",
+        "inputHeaders": {},
+        "inputBody": {
+            "email": "example@example.com",
+            "password": "password"
+        },
+        "expected": {
+            "status": 200,
+            "response": {
+                "Id": "Id",
+                "Name": "Shaurya",
+                "Email": "example@example.com",
+                "Token": "Token"
+            }
+        }
+    },
+    {
+        "name": "LoginUserInvalidCredentials",
+        "endpoint": "/api/auth/login",
+        "method": "POST",
+        "handler": "LOGIN",
+        "inputHeaders": {},
+        "inputBody": {
+            "email": "example@example.com",
+            "password": "notPassword"
+        },
+        "expected": {
+            "status": 400,
+            "response": {
+                "Error": "Email/Password is incorrect"
+            }
+        }
+    },
+    {
+        "name": "LoginUserNotFound",
+        "endpoint": "/api/auth/login",
+        "method": "POST",
+        "handler": "LOGIN",
+        "inputHeaders": {},
+        "inputBody": {
+            "email": "example@notuser.com",
+            "password": "passowrd"
+        },
+        "expected": {
+            "status": 404,
+            "response": {
+                "Error": "mongo: no documents in result"
+            }
+        }
+    },
+    {
+        "name": "GetUserSuccess",
+        "endpoint": "/api/auth/user",
+        "method": "GET",
+        "handler": "GET_USER",
+        "inputHeaders": {
+            "Authorization": "Bearer Token"
+        },
+        "inputBody": {},
+        "expected": {
+            "status": 200,
+            "response": {
+                "Id": "Id",
+                "Name": "Shaurya",
+                "Email": "example@example.com",
+                "Token": "Token"
+            }
+        }
+    },
+    {
+        "name": "CreateProductSuccess",
+        "endpoint": "/api/product",
+        "method": "POST",
+        "handler": "CREATE_PRODUCT",
+        "inputHeaders": {
+            "Authorization": "Bearer Token"
+        },
+        "inputBody": {
+            "name": "product 1",
+            "description": "description 1",
+            "thumbnail": "https://www.google.com"
+        },
+        "expected": {
+            "status": 201,
+            "response": {
+                "Id": "Id"
+            }
+        }
+    },
+    {
+        "name": "CreateProductNameNoProvided",
+        "endpoint": "/api/product",
+        "method": "POST",
+        "handler": "CREATE_PRODUCT",
+        "inputHeaders": {
+            "Authorization": "Bearer Token"
+        },
+        "inputBody": {
+            "description": "description 1",
+            "thumbnail": "https://www.google.com"
+        },
+        "expected": {
+            "status": 400,
+            "response": {
+                "Error": "Key: 'Product.Name' Error:Field validation for 'Name' failed on the 'required' tag"
+            }
+        }
+    },
+    {
+        "name": "CreateProductDescriptionNotProvided",
+        "endpoint": "/api/product",
+        "method": "POST",
+        "handler": "CREATE_PRODUCT",
+        "inputHeaders": {
+            "Authorization": "Bearer Token"
+        },
+        "inputBody": {
+            "name": "product 1",
+            "thumbnail": "https://www.google.com"
+        },
+        "expected": {
+            "status": 400,
+            "response": {
+                "Error": "Key: 'Product.Description' Error:Field validation for 'Description' failed on the 'required' tag"
+            }
+        }
+    },
+    {
+        "name": "CreateProductInvalidThumbnailUrl",
+        "endpoint": "/api/product",
+        "method": "POST",
+        "handler": "CREATE_PRODUCT",
+        "inputHeaders": {
+            "Authorization": "Bearer Token"
+        },
+        "inputBody": {
+            "name": "product 1",
+            "description": "description 1",
+            "thumbnail": "googlecom"
+        },
+        "expected": {
+            "status": 400,
+            "response": {
+                "Error": "Key: 'Product.ThumbnailImageUrl' Error:Field validation for 'ThumbnailImageUrl' failed on the 'url' tag"
+            }
+        }
+    },
+    {
+        "name": "CreateReviewSuccess",
+        "endpoint": "/api/review/{productId}",
+        "method": "POST",
+        "handler": "CREATE_REVIEW",
+        "inputHeaders": {
+            "Authorization": "Bearer Token"
+        },
+        "inputBody": {
+            "text": "text 1",
+            "rating": 1
+        },
+        "expected": {
+            "status": 201,
+            "response": {
+                "Id": "Id"
+            }
+        }
+    },
+    {
+        "name": "CreateReviewTextNotProvided",
+        "endpoint": "/api/review/{productId}",
+        "method": "POST",
+        "handler": "CREATE_REVIEW",
+        "inputHeaders": {
+            "Authorization": "Bearer Token"
+        },
+        "inputBody": {
+            "rating": 1
+        },
+        "expected": {
+            "status": 400,
+            "response": {
+                "Error": "Key: 'Review.Text' Error:Field validation for 'Text' failed on the 'required' tag"
+            }
+        }
+    },
+    {
+        "name": "CreateReviewRatingNotProvided",
+        "endpoint": "/api/review/{productId}",
+        "method": "POST",
+        "handler": "CREATE_REVIEW",
+        "inputHeaders": {
+            "Authorization": "Bearer Token"
+        },
+        "inputBody": {
+            "text": "text 1"
+        },
+        "expected": {
+            "status": 400,
+            "response": {
+                "Error": "Key: 'Review.Rating' Error:Field validation for 'Rating' failed on the 'required' tag"
+            }
+        }
+    },
+    {
+        "name": "CreateReviewInvalidRating",
+        "endpoint": "/api/review/{productId}",
+        "method": "POST",
+        "handler": "CREATE_REVIEW",
+        "inputHeaders": {
+            "Authorization": "Bearer Token"
+        },
+        "inputBody": {
+            "text": "text 1",
+            "rating": 10
+        },
+        "expected": {
+            "status": 400,
+            "response": {
+                "Error": "Key: 'Review.Rating' Error:Field validation for 'Rating' failed on the 'max' tag"
+            }
+        }
+    }
+]
