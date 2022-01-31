@@ -12,6 +12,7 @@ import (
 	"github.com/ShauryaAg/ProductAPI/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func CreateProduct(w http.ResponseWriter, r *http.Request) {
@@ -69,13 +70,15 @@ func SearchProducts(w http.ResponseWriter, r *http.Request) {
 	var products []models.Product
 
 	filter := bson.M{}
-	if r.URL.Query().Get("q") != "" {
-		filter = bson.M{"name": bson.M{"$regex": r.URL.Query().Get("q")}}
+	if q := r.URL.Query().Get("q"); q != "" {
+		filter = bson.M{"name": bson.M{"$regex": q}}
 	}
 
+	paginationOptions := utils.Pagination(r, options.Find())
 	cursor, err := db.Models["product"].Find(
 		r.Context(),
 		filter,
+		paginationOptions,
 	)
 	if err != nil {
 		utils.Error(w, r, err.Error(), http.StatusInternalServerError)
