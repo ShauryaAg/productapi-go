@@ -48,29 +48,28 @@ var (
 	Id       string
 )
 
-func setUp(t *testing.T, client *mongo.Client) (string, string) {
-	db := client.Database("test")
-	db.Collection("users").DeleteMany(context.TODO(), bson.M{})
-	db.Collection("products").DeleteMany(context.TODO(), bson.M{})
-	db.Collection("reviews").DeleteMany(context.TODO(), bson.M{})
+func setUp(ctx context.Context, db *mongo.Database) (string, string) {
+	db.Collection("user").DeleteMany(ctx, bson.M{})
+	db.Collection("product").DeleteMany(ctx, bson.M{})
+	db.Collection("review").DeleteMany(ctx, bson.M{})
 
 	id := primitive.NewObjectID()
 
 	// Create User
 	user, _ := models.NewUser("Shaurya", "abc@xyz.com", "password")
 	user.Id = id
-	_, _ = db.Collection("user").InsertOne(context.TODO(), user)
+	_, _ = db.Collection("user").InsertOne(ctx, user)
 	jwtToken, _ := utils.CreateToken(*user)
 
 	// Create Product
 	product, _ := models.NewProduct("Product1", "Description1", "http://image1.com")
 	product.Id = id
-	_, _ = db.Collection("product").InsertOne(context.TODO(), product)
+	_, _ = db.Collection("product").InsertOne(ctx, product)
 
 	// Create Review
 	review, _ := models.NewReview("Review1", 3, *user)
 	review.Id = id
-	_, _ = db.Collection("review").InsertOne(context.TODO(), review)
+	_, _ = db.Collection("review").InsertOne(ctx, review)
 
 	return jwtToken, id.Hex()
 }
@@ -80,10 +79,16 @@ func test(
 	casesFile string,
 	newRequest func(method string, endpoint string, body *bytes.Buffer, headers interface{}) (*http.Request, error),
 ) {
-	client, err := db.InitDatabase("test", context.TODO())
+	dbName := "test"
+	ctx := context.TODO()
+	client, err := db.InitDatabase(dbName, ctx)
 	if err != nil {
 		t.Error(err)
 	}
+	defer client.Disconnect(ctx)
+
+	db := client.Database(dbName)
+	JwtToken, Id = setUp(ctx, db)
 
 	jsonFile, err := ioutil.ReadFile(casesFile)
 	if err != nil {
@@ -95,8 +100,6 @@ func test(
 	if err != nil {
 		t.Error(err)
 	}
-
-	JwtToken, Id = setUp(t, client)
 
 	for _, testCase := range testCases {
 		t.Run(testCase.Name, func(t *testing.T) {
@@ -136,9 +139,11 @@ func test(
 	}
 
 	t.Cleanup(func() {
-		client.Database("test").Collection("users").DeleteMany(context.TODO(), bson.M{})
-		client.Database("test").Drop(context.TODO())
-		client.Disconnect(context.TODO())
+		db.Collection("users").DeleteMany(ctx, bson.M{})
+		db.Collection("product").DeleteMany(ctx, bson.M{})
+		db.Collection("review").DeleteMany(ctx, bson.M{})
+		db.Drop(ctx)
+		client.Disconnect(ctx)
 	})
 }
 
