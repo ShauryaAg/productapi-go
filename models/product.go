@@ -15,6 +15,8 @@ type Product struct {
 	RatingCount       int                `json:"ratingCount" bson:"ratingCount"`
 }
 
+// NewProduct creates a new product
+// and returns an error if the product is invalid
 func NewProduct(name, description, thumbnailImageUrl string) (*Product, error) {
 	product := &Product{
 		Id:                primitive.NewObjectID(),

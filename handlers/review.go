@@ -15,6 +15,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+// Create a new review
+// POST /api/review/{productId}
 func CreateReview(w http.ResponseWriter, r *http.Request) {
 	var review *models.Review = &models.Review{}
 	var user models.User

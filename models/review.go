@@ -12,6 +12,8 @@ type Review struct {
 	Reviewer User               `json:"user" bson:"user" mongo:"index" validate:"required"`
 }
 
+// NewReview creates a new review
+// and returns an error if the review is invalid
 func NewReview(text string, rating int, reviewer User) (*Review, error) {
 
 	review := &Review{

@@ -15,6 +15,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+// Seed is a wrapper function to seed data to mongo database
 func Seed() {
 	ctx := context.Background()
 	client, err := db.InitDatabase("mongo", ctx)
@@ -34,6 +35,7 @@ func Seed() {
 	}
 }
 
+// seedDB seeds data to mongo database
 func seedDB(ctx context.Context, client *mongo.Client, dataFiles map[string]interface{}) error {
 	db := client.Database("mongo")
 	for file, model := range dataFiles {
@@ -46,6 +48,7 @@ func seedDB(ctx context.Context, client *mongo.Client, dataFiles map[string]inte
 	return nil
 }
 
+// seedModel seeds data to each mongo collection
 func seedModel(ctx context.Context, db *mongo.Database, model interface{}, file string) error {
 	modelName := strings.ToLower(reflect.TypeOf(model).Name())
 	collection := db.Collection(modelName)

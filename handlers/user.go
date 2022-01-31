@@ -14,6 +14,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+// Register a new user
+// POST /api/auth/register
 func Register(w http.ResponseWriter, r *http.Request) {
 	var user *models.User = &models.User{}
 
@@ -72,6 +74,8 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonBytes)
 }
 
+// Login an existing user
+// POST /api/auth/login
 func Login(w http.ResponseWriter, r *http.Request) {
 	var data map[string]string
 	var user models.User
@@ -134,6 +138,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 }
 
 // Get user details using JWT
+// GET /api/auth/user
 func GetUser(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 

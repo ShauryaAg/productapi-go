@@ -7,6 +7,7 @@ import (
 	"github.com/ShauryaAg/ProductAPI/utils"
 )
 
+// AuthMiddleware is a middleware that checks if the request contains a valid JWT token
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authHeader := strings.Split(r.Header.Get("Authorization"), "Bearer ")

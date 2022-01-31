@@ -15,6 +15,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// Create a new product
+// POST /api/product
 func CreateProduct(w http.ResponseWriter, r *http.Request) {
 	var product *models.Product = &models.Product{}
 
@@ -66,6 +68,8 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonBytes)
 }
 
+// Search for products based on query param
+// GET /api/products?q=<query>&page=<page>&limit=<limit>
 func SearchProducts(w http.ResponseWriter, r *http.Request) {
 	var products []models.Product
 

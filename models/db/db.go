@@ -19,6 +19,8 @@ var (
 	connectionUri = os.Getenv("MONGODB_URI")
 )
 
+// InitDatabase initializes the database connection
+// and returns the intialized client object
 func InitDatabase(database string, ctx context.Context) (*mongo.Client, error) {
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(connectionUri))
 	if err != nil {
