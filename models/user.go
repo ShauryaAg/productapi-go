@@ -13,7 +13,6 @@ type User struct {
 	Name     string             `json:"name" bson:"name" validate:"required"`
 	Password string             `json:"password" bson:"password" validate:"required"`
 	Email    string             `json:"email" bson:"email" mongo:"unique" validate:"required,email"`
-	IsActive bool               `json:"is_active" bson:"is_active"`
 }
 
 func NewUser(name, email, password string) (*User, error) {
