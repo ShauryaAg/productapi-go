@@ -8,11 +8,20 @@ import (
 	"time"
 
 	"github.com/ShauryaAg/ProductAPI/models/db"
+	"github.com/ShauryaAg/ProductAPI/models/db/seed"
 	"github.com/ShauryaAg/ProductAPI/routes"
 	"github.com/rs/cors"
 )
 
+var (
+	seedDb = os.Getenv("SEED_DB")
+)
+
 func main() {
+	if seedDb == "true" {
+		seed.Seed()
+	}
+
 	r := routes.GetRoutes()
 
 	ctx := context.Background()

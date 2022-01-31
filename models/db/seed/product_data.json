@@ -1,0 +1,82 @@
+[
+    {
+        "name": "Ovis ammon",
+        "description": "H simplex keratitis",
+        "thumbnail": "http://dummyimage.com/244x100.png/cc0000/ffffff",
+        "reviews": [],
+        "ratingSum": 0,
+        "ratingCount": 0
+    },
+    {
+        "name": "Eurocephalus anguitimens",
+        "description": "Histoplasm capsul mening",
+        "thumbnail": "http://dummyimage.com/220x100.png/dddddd/000000",
+        "reviews": [],
+        "ratingSum": 0,
+        "ratingCount": 0
+    },
+    {
+        "name": "Boselaphus tragocamelus",
+        "description": "Fx triquetral, wrist-cl",
+        "thumbnail": "http://dummyimage.com/246x100.png/ff4444/ffffff",
+        "reviews": [],
+        "ratingSum": 0,
+        "ratingCount": 0
+    },
+    {
+        "name": "Picoides pubescens",
+        "description": "Family hx-malignancy NOS",
+        "thumbnail": "http://dummyimage.com/249x100.png/5fa2dd/ffffff",
+        "reviews": [],
+        "ratingSum": 0,
+        "ratingCount": 0
+    },
+    {
+        "name": "Gyps fulvus",
+        "description": "Oth prblms rltd lfstyle",
+        "thumbnail": "http://dummyimage.com/190x100.png/ff4444/ffffff",
+        "reviews": [],
+        "ratingSum": 0,
+        "ratingCount": 0
+    },
+    {
+        "name": "Bubo virginianus",
+        "description": "Jt derangment NOS-up/arm",
+        "thumbnail": "http://dummyimage.com/112x100.png/ff4444/ffffff",
+        "reviews": [],
+        "ratingSum": 0,
+        "ratingCount": 0
+    },
+    {
+        "name": "Semnopithecus entellus",
+        "description": "Elbow enthesopathy NEC",
+        "thumbnail": "http://dummyimage.com/225x100.png/ff4444/ffffff",
+        "reviews": [],
+        "ratingSum": 0,
+        "ratingCount": 0
+    },
+    {
+        "name": "Megaderma spasma",
+        "description": "Oral soft tissue cyst",
+        "thumbnail": "http://dummyimage.com/158x100.png/5fa2dd/ffffff",
+        "reviews": [],
+        "ratingSum": 0,
+        "ratingCount": 0
+    },
+    {
+        "name": "Canis lupus",
+        "description": "Dis mid ear/mastoid NEC",
+        "thumbnail": "http://dummyimage.com/162x100.png/5fa2dd/ffffff",
+        "reviews": [],
+        "ratingSum": 0,
+        "ratingCount": 0
+    },
+    {
+        "name": "Tursiops truncatus",
+        "description": "Large cell lymph abdom",
+        "thumbnail": "http://dummyimage.com/107x100.png/ff4444/ffffff",
+        "reviews": [],
+        "ratingSum": 0,
+        "ratingCount": 0
+    }
+]
