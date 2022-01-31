@@ -9,7 +9,7 @@ type Product struct {
 	Id                primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
 	Name              string             `json:"name" bson:"name" validate:"required"`
 	Description       string             `json:"description" bson:"description" validate:"required"`
-	ThumbnailImageUrl string             `json:"thumbnail" bson:"thumbnail"`
+	ThumbnailImageUrl string             `json:"thumbnail" bson:"thumbnail" validate:"url"`
 	Reviews           []Review           `json:"reviews" bson:"reviews"`
 	RatingSum         float64            `json:"ratingSum" bson:"ratingSum"`
 	RatingCount       int                `json:"ratingCount" bson:"ratingCount"`
