@@ -6,6 +6,7 @@ import (
 	"net/http"
 )
 
+// Error writes the error to the response and logs it.
 func Error(w http.ResponseWriter, r *http.Request, errorMessage string, statusCode int) {
 	fmt.Println("err", errorMessage)
 

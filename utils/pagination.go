@@ -7,6 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// Pagination returns pagination options for mongo queries
 func Pagination(r *http.Request, findOptions *options.FindOptions) (*options.FindOptions, error) {
 	pageStr := r.URL.Query().Get("page")
 	if pageStr == "" {

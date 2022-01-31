@@ -13,6 +13,7 @@ var (
 	secret = os.Getenv("SECRET")
 )
 
+// CreateToken generates a new JWT token for the [user]
 func CreateToken(user models.User) (string, error) {
 	claims := jwt.MapClaims{}
 	claims["authorized"] = true
@@ -29,6 +30,7 @@ func CreateToken(user models.User) (string, error) {
 	return token, nil
 }
 
+// ParseToken parses the jwtToken and adds the decoded userId to the request header
 func ParseToken(tokenString string) (*jwt.MapClaims, error) {
 
 	token, err := jwt.ParseWithClaims(tokenString, &jwt.MapClaims{}, func(token *jwt.Token) (interface{}, error) {
