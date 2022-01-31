@@ -1,8 +1,6 @@
 package models
 
 import (
-	"fmt"
-
 	validator "github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
@@ -36,7 +34,6 @@ func NewUser(name, email, password string) (*User, error) {
 func (u *User) HashPassword() error {
 	hash, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
 
@@ -47,7 +44,6 @@ func (u *User) HashPassword() error {
 func (u *User) VerifyPassword(attempt string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(attempt))
 	if err != nil {
-		fmt.Println(err)
 		return false
 	}
 

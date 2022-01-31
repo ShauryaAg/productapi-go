@@ -54,7 +54,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 	token, err := utils.CreateToken(*user)
 	if err != nil {
-		fmt.Println(err)
+		utils.Error(w, r, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	jsonBytes, err := json.Marshal(struct {
@@ -109,7 +109,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	if valid {
 		token, err = utils.CreateToken(user)
 		if err != nil {
-			fmt.Println(err)
+			utils.Error(w, r, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	} else {
@@ -138,7 +138,6 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 
 	id := r.Header.Get("decoded")
-	fmt.Print("id:", id)
 	objectId, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		utils.Error(w, r, err.Error(), http.StatusBadRequest)
