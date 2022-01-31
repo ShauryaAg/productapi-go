@@ -100,7 +100,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	err = db.Models["user"].FindOne(r.Context(), bson.M{"email": data["email"]}).Decode(&user)
 	if err != nil {
-		fmt.Println("err", err)
 		utils.Error(w, r, err.Error(), http.StatusNotFound)
 		return
 	}
@@ -139,6 +138,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 
 	id := r.Header.Get("decoded")
+	fmt.Print("id:", id)
 	objectId, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		utils.Error(w, r, err.Error(), http.StatusBadRequest)

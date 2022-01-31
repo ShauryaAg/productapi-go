@@ -68,9 +68,14 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
 func SearchProducts(w http.ResponseWriter, r *http.Request) {
 	var products []models.Product
 
+	filter := bson.M{}
+	if r.URL.Query().Get("q") != "" {
+		filter = bson.M{"name": bson.M{"$regex": r.URL.Query().Get("q")}}
+	}
+
 	cursor, err := db.Models["product"].Find(
 		r.Context(),
-		bson.M{"name": bson.M{"$regex": r.URL.Query().Get("q")}},
+		filter,
 	)
 	if err != nil {
 		utils.Error(w, r, err.Error(), http.StatusInternalServerError)
