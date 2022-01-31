@@ -7,7 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func Pagination(r *http.Request, findOptions *options.FindOptions) *options.FindOptions {
+func Pagination(r *http.Request, findOptions *options.FindOptions) (*options.FindOptions, error) {
 	pageStr := r.URL.Query().Get("page")
 	if pageStr == "" {
 		pageStr = "1"
@@ -18,15 +18,23 @@ func Pagination(r *http.Request, findOptions *options.FindOptions) *options.Find
 		limitStr = "4"
 	}
 
-	page, _ := strconv.ParseInt(pageStr, 10, 32)
-	limit, _ := strconv.ParseInt(limitStr, 10, 32)
+	page, err := strconv.ParseInt(pageStr, 10, 32)
+	if err != nil {
+		return nil, err
+	}
+
+	limit, err := strconv.ParseInt(limitStr, 10, 32)
+	if err != nil {
+		return nil, err
+	}
+
 	if page == 1 {
 		findOptions.SetSkip(0)
 		findOptions.SetLimit(limit)
-		return findOptions
+		return findOptions, nil
 	}
 
 	findOptions.SetSkip((page - 1) * limit)
 	findOptions.SetLimit(limit)
-	return findOptions
+	return findOptions, nil
 }

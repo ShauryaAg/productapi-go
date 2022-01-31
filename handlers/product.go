@@ -74,7 +74,12 @@ func SearchProducts(w http.ResponseWriter, r *http.Request) {
 		filter = bson.M{"name": bson.M{"$regex": q}}
 	}
 
-	paginationOptions := utils.Pagination(r, options.Find())
+	paginationOptions, err := utils.Pagination(r, options.Find())
+	if err != nil {
+		utils.Error(w, r, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	cursor, err := db.Models["product"].Find(
 		r.Context(),
 		filter,
