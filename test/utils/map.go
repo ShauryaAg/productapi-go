@@ -2,7 +2,9 @@ package utils
 
 import "reflect"
 
-// func to check if the given maps are same or not, except for Id and Token
+// MatchMaps checks if the given maps are equal or not
+// except for matching "Id" and "Token" field as they are
+// generated randomly
 func MatchMaps(m1 map[string]interface{}, m2 map[string]interface{}) bool {
 	m1copy := CopyMap(m1)
 	m2copy := CopyMap(m2)
@@ -16,6 +18,7 @@ func MatchMaps(m1 map[string]interface{}, m2 map[string]interface{}) bool {
 	return reflect.DeepEqual(m1copy, m2copy)
 }
 
+// CopyMap copies the given map and returns a new map
 func CopyMap(m map[string]interface{}) map[string]interface{} {
 	cp := make(map[string]interface{})
 	for k, v := range m {
@@ -30,7 +33,7 @@ func CopyMap(m map[string]interface{}) map[string]interface{} {
 	return cp
 }
 
-// func to check if keys in map 1 and map 2 are same
+// AreKeysEqual checks if the keys of m1 are available in m2
 func AreKeysSame(m1 map[string]interface{}, m2 map[string]interface{}) bool {
 	for k := range m1 {
 		if _, ok := m2[k]; !ok {
@@ -41,7 +44,7 @@ func AreKeysSame(m1 map[string]interface{}, m2 map[string]interface{}) bool {
 	return true
 }
 
-// func to check if the given fields in map[string]interface{} exist or not
+// CheckFieldsExists checks if the given fields exist in map[string]interface{} or not
 func CheckFieldsExist(fields map[string]interface{}, fieldNames []string) bool {
 	for _, fieldName := range fieldNames {
 		if _, ok := fields[fieldName]; !ok {
