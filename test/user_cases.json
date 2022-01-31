@@ -109,5 +109,18 @@
                 "Token": "Token"
             }
         }
+    },
+    {
+        "name": "GetUserNoJwtProvided",
+        "endpoint": "/api/auth/user",
+        "method": "GET",
+        "handler": "GET_USER",
+        "inputBody": {},
+        "expected": {
+            "status": 401,
+            "response": {
+                "Error": "Malformed Token"
+            }
+        }
     }
 ]
