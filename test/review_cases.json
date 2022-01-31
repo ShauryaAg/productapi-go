@@ -1,0 +1,76 @@
+[
+    {
+        "name": "CreateReviewSuccess",
+        "endpoint": "/api/review/{productId}",
+        "method": "POST",
+        "handler": "CREATE_REVIEW",
+        "inputHeaders": {
+            "Authorization": "Bearer Token"
+        },
+        "inputBody": {
+            "text": "text 1",
+            "rating": 1
+        },
+        "expected": {
+            "status": 201,
+            "response": {
+                "Id": "Id"
+            }
+        }
+    },
+    {
+        "name": "CreateReviewTextNotProvided",
+        "endpoint": "/api/review/{productId}",
+        "method": "POST",
+        "handler": "CREATE_REVIEW",
+        "inputHeaders": {
+            "Authorization": "Bearer Token"
+        },
+        "inputBody": {
+            "rating": 1
+        },
+        "expected": {
+            "status": 400,
+            "response": {
+                "Error": "Key: 'Review.Text' Error:Field validation for 'Text' failed on the 'required' tag"
+            }
+        }
+    },
+    {
+        "name": "CreateReviewRatingNotProvided",
+        "endpoint": "/api/review/{productId}",
+        "method": "POST",
+        "handler": "CREATE_REVIEW",
+        "inputHeaders": {
+            "Authorization": "Bearer Token"
+        },
+        "inputBody": {
+            "text": "text 1"
+        },
+        "expected": {
+            "status": 400,
+            "response": {
+                "Error": "Key: 'Review.Rating' Error:Field validation for 'Rating' failed on the 'required' tag"
+            }
+        }
+    },
+    {
+        "name": "CreateReviewInvalidRating",
+        "endpoint": "/api/review/{productId}",
+        "method": "POST",
+        "handler": "CREATE_REVIEW",
+        "inputHeaders": {
+            "Authorization": "Bearer Token"
+        },
+        "inputBody": {
+            "text": "text 1",
+            "rating": 10
+        },
+        "expected": {
+            "status": 400,
+            "response": {
+                "Error": "Key: 'Review.Rating' Error:Field validation for 'Rating' failed on the 'max' tag"
+            }
+        }
+    }
+]

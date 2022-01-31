@@ -9,11 +9,11 @@ import (
 
 func GetUserRoutes(r chi.Router) {
 	r.Route("/auth", func(r chi.Router) {
-		r.HandleFunc("/login", handlers.Login)
-		r.HandleFunc("/register", handlers.Register)
+		r.Post("/login", handlers.Login)
+		r.Post("/register", handlers.Register)
 
 		r.With(middlewares.AuthMiddleware).Route("/user", func(r chi.Router) {
-			r.HandleFunc("/", handlers.GetUser)
+			r.Get("/", handlers.GetUser)
 		})
 	})
 

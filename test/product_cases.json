@@ -1,0 +1,80 @@
+[
+    {
+        "name": "CreateProductSuccess",
+        "endpoint": "/api/product",
+        "method": "POST",
+        "handler": "CREATE_PRODUCT",
+        "inputHeaders": {
+            "Authorization": "Bearer Token"
+        },
+        "inputBody": {
+            "name": "product 1",
+            "description": "description 1",
+            "thumbnail": "https://www.google.com"
+        },
+        "expected": {
+            "status": 201,
+            "response": {
+                "Id": "Id"
+            }
+        }
+    },
+    {
+        "name": "CreateProductNameNoProvided",
+        "endpoint": "/api/product",
+        "method": "POST",
+        "handler": "CREATE_PRODUCT",
+        "inputHeaders": {
+            "Authorization": "Bearer Token"
+        },
+        "inputBody": {
+            "description": "description 1",
+            "thumbnail": "https://www.google.com"
+        },
+        "expected": {
+            "status": 400,
+            "response": {
+                "Error": "Key: 'Product.Name' Error:Field validation for 'Name' failed on the 'required' tag"
+            }
+        }
+    },
+    {
+        "name": "CreateProductDescriptionNotProvided",
+        "endpoint": "/api/product",
+        "method": "POST",
+        "handler": "CREATE_PRODUCT",
+        "inputHeaders": {
+            "Authorization": "Bearer Token"
+        },
+        "inputBody": {
+            "name": "product 1",
+            "thumbnail": "https://www.google.com"
+        },
+        "expected": {
+            "status": 400,
+            "response": {
+                "Error": "Key: 'Product.Description' Error:Field validation for 'Description' failed on the 'required' tag"
+            }
+        }
+    },
+    {
+        "name": "CreateProductInvalidThumbnailUrl",
+        "endpoint": "/api/product",
+        "method": "POST",
+        "handler": "CREATE_PRODUCT",
+        "inputHeaders": {
+            "Authorization": "Bearer Token"
+        },
+        "inputBody": {
+            "name": "product 1",
+            "description": "description 1",
+            "thumbnail": "googlecom"
+        },
+        "expected": {
+            "status": 400,
+            "response": {
+                "Error": "Key: 'Product.ThumbnailImageUrl' Error:Field validation for 'ThumbnailImageUrl' failed on the 'url' tag"
+            }
+        }
+    }
+]

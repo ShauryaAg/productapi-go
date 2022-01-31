@@ -1,0 +1,113 @@
+[
+    {
+        "name": "CreateUserSuccess",
+        "endpoint": "/api/auth/register",
+        "method": "POST",
+        "handler": "REGISTER",
+        "inputHeaders": {},
+        "inputBody": {
+            "name": "Shaurya",
+            "email": "example@example.com",
+            "password": "password"
+        },
+        "expected": {
+            "status": 200,
+            "response": {
+                "Id": "Id",
+                "Email": "example@example.com",
+                "Token": "Token"
+            }
+        }
+    },
+    {
+        "name": "CreateUserAlreadyExists",
+        "endpoint": "/api/auth/register",
+        "handler": "REGISTER",
+        "method": "POST",
+        "inputHeaders": {},
+        "inputBody": {
+            "name": "Shaurya",
+            "email": "example@example.com",
+            "password": "password"
+        },
+        "expected": {
+            "status": 400,
+            "response": {
+                "Error": "write exception: write errors: [E11000 duplicate key error collection: test.user index: email_1 dup key: { email: \"example@example.com\" }]"
+            }
+        }
+    },
+    {
+        "name": "LoginUserSuccess",
+        "endpoint": "/api/auth/login",
+        "handler": "LOGIN",
+        "method": "POST",
+        "inputHeaders": {},
+        "inputBody": {
+            "email": "example@example.com",
+            "password": "password"
+        },
+        "expected": {
+            "status": 200,
+            "response": {
+                "Id": "Id",
+                "Name": "Shaurya",
+                "Email": "example@example.com",
+                "Token": "Token"
+            }
+        }
+    },
+    {
+        "name": "LoginUserInvalidCredentials",
+        "endpoint": "/api/auth/login",
+        "method": "POST",
+        "handler": "LOGIN",
+        "inputHeaders": {},
+        "inputBody": {
+            "email": "example@example.com",
+            "password": "notPassword"
+        },
+        "expected": {
+            "status": 400,
+            "response": {
+                "Error": "Email/Password is incorrect"
+            }
+        }
+    },
+    {
+        "name": "LoginUserNotFound",
+        "endpoint": "/api/auth/login",
+        "method": "POST",
+        "handler": "LOGIN",
+        "inputHeaders": {},
+        "inputBody": {
+            "email": "example@notuser.com",
+            "password": "passowrd"
+        },
+        "expected": {
+            "status": 404,
+            "response": {
+                "Error": "mongo: no documents in result"
+            }
+        }
+    },
+    {
+        "name": "GetUserSuccess",
+        "endpoint": "/api/auth/user",
+        "method": "GET",
+        "handler": "GET_USER",
+        "inputHeaders": {
+            "Authorization": "Bearer Token"
+        },
+        "inputBody": {},
+        "expected": {
+            "status": 200,
+            "response": {
+                "Id": "Id",
+                "Name": "Shaurya",
+                "Email": "abc@xyz.com",
+                "Token": "Token"
+            }
+        }
+    }
+]
