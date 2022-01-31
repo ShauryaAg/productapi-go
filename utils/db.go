@@ -12,6 +12,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// Migrate function will create the collections if they do not exist.
+// Along with creating the collections, it will also create indexes on the collections.
 func Migrate(ctx context.Context, db *mongo.Database, models ...interface{}) (map[string]*mongo.Collection, error) {
 	collections := make(map[string]*mongo.Collection)
 	for _, model := range models {
@@ -23,6 +25,7 @@ func Migrate(ctx context.Context, db *mongo.Database, models ...interface{}) (ma
 			return nil, err
 		}
 
+		// If the collection does not exist, create it.
 		if !exists {
 			err := db.CreateCollection(ctx, modelName)
 			if err != nil {
@@ -30,6 +33,7 @@ func Migrate(ctx context.Context, db *mongo.Database, models ...interface{}) (ma
 			}
 		}
 
+		// Get the collection.
 		collection := db.Collection(modelName)
 		collections[modelName] = collection
 
@@ -44,22 +48,20 @@ func Migrate(ctx context.Context, db *mongo.Database, models ...interface{}) (ma
 				continue loop
 			}
 
-			// check if index exists already
+			// Check if the index already exists
 			indexes, err := collection.Indexes().ListSpecifications(ctx)
 			if err != nil {
 				return nil, err
 			}
 
+			// regex to check if index such as "fieldName_1" exists
 			re := regexp.MustCompile(fmt.Sprintf(`^%s_\d+`, fieldName))
 			for _, index := range indexes {
 				if re.Match([]byte(index.Name)) {
 					continue loop
 				}
-				var unique = true
-				if index.Unique == nil {
-					unique = false
-				}
-				if (unique) && (strings.Contains(fieldTag, "unique")) {
+				// Check if existing index is unique
+				if (index.Unique != nil) && (strings.Contains(fieldTag, "unique")) {
 					continue loop
 				}
 			}
@@ -74,6 +76,8 @@ func Migrate(ctx context.Context, db *mongo.Database, models ...interface{}) (ma
 					// TODO: add more options for max,min,expire
 				}
 			}
+
+			// Create the index with the options
 			_, err = collection.Indexes().CreateOne(ctx, mongo.IndexModel{
 				Keys:    bson.M{fieldName: 1},
 				Options: indexOptions,
@@ -86,6 +90,7 @@ func Migrate(ctx context.Context, db *mongo.Database, models ...interface{}) (ma
 	return collections, nil
 }
 
+// collectionExists checks if a collection exists in the database.
 func collectionExists(ctx context.Context, db *mongo.Database, collection string) (bool, error) {
 	names, err := db.ListCollectionNames(ctx, bson.M{})
 	if err != nil {
