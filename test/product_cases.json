@@ -76,5 +76,32 @@
                 "Error": "Key: 'Product.ThumbnailImageUrl' Error:Field validation for 'ThumbnailImageUrl' failed on the 'url' tag"
             }
         }
+    },
+    {
+        "name": "SearchProductSuccess",
+        "endpoint": "/api/product",
+        "method": "GET",
+        "handler": "SEARCH_PRODUCT",
+        "inputHeaders": {},
+        "inputBody": {},
+        "expected": {
+            "status": 200,
+            "response": [
+                {
+                    "Id": "Id",
+                    "Name": "Product1",
+                    "Description": "Description1",
+                    "Rating": 0,
+                    "ThumbnailImageUrl": "http://image1.com"
+                },
+                {
+                    "Id": "Id",
+                    "Name": "product 1",
+                    "Description": "description 1",
+                    "Rating": 0,
+                    "ThumbnailImageUrl": "https://www.google.com"
+                }
+            ]
+        }
     }
 ]

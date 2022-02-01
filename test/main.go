@@ -124,14 +124,13 @@ func test(
 					status, expected["status"])
 			}
 
-			body := make(map[string]interface{})
+			var body interface{}
 			err = json.Unmarshal(rr.Body.Bytes(), &body)
 			if err != nil {
 				t.Error(err)
 			}
 
-			expectedResponse := expected["response"].(map[string]interface{})
-			if !testutils.MatchMaps(expectedResponse, body) {
+			if !testutils.Compare(expected["response"], body) {
 				t.Errorf("handler returned wrong body: got %v want %v",
 					body, expected["response"])
 			}
