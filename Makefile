@@ -15,9 +15,16 @@ exec: ## Execute the container
 test: exec 
  	COMMAND=go test -v ./test
 
-# Build and run the container
+# Run the container
 up: ## Spin up the project
 	$(DOCKER_COMPOSE) up
+
+# Run the container in the background
+up-d: 
+	up -d
+
+# Build and run the container
+run: build up
 
 down: ## Stop running containers
 	$(DOCKER_COMPOSE) down
