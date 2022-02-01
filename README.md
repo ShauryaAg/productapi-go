@@ -69,6 +69,34 @@ SEED_DB=<true/false>
 
 > Set the `SEED_DB` environment variable to `true` to seed the database with sample data.
 
+#### Usage
+
+The Repo contains a `Makefile` which can be used to build and run the API locally.
+
+##### Building
+
+```sh
+make build
+```
+
+Used to build the docker containers
+
+##### Running
+
+```sh
+make up
+```
+
+Used to run the docker containers
+
+##### Testing
+
+```sh
+make test
+```
+
+Used to run the goapp test cases
+
 ### Endpoint Usage
 
 #### Auth
