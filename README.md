@@ -99,7 +99,7 @@ SEED_DB=<true/false>
 
     - `GET`
 
-      - Query params: `{q, page, limit}`
+      - _Query params:_ `{q, page, limit}`
       - _Returns:_ `All products matching the query at the given page`
 
     - `POST`
