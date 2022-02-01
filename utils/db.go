@@ -14,6 +14,8 @@ import (
 
 // Migrate function will create the collections if they do not exist.
 // Along with creating the collections, it will also create indexes on the collections.
+//
+// TODO: Add support for composite keys
 func Migrate(ctx context.Context, db *mongo.Database, models ...interface{}) (map[string]*mongo.Collection, error) {
 	collections := make(map[string]*mongo.Collection)
 	for _, model := range models {
