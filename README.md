@@ -97,16 +97,16 @@ SEED_DB=<true/false>
 
   - _Allowed Methods:_ `GET, POST`
 
-        - `GET`
+    - `GET`
 
-        - Query params: `{q, page, limit}`
-        - _Returns:_ `All products matching the query at the given page`
+      - Query params: `{q, page, limit}`
+      - _Returns:_ `All products matching the query at the given page`
 
-        - `POST`
+    - `POST`
 
-        - _Authorization:_ `Bearer <Token>`
-        - _Accepted Fields:_ `{name, description, thumbnailImageUrl}`
-        - _Returns:_ `Product Details`
+      - _Authorization:_ `Bearer <Token>`
+      - _Accepted Fields:_ `{name, description, thumbnailImageUrl}`
+      - _Returns:_ `Product Details`
 
 #### Reviews
 
