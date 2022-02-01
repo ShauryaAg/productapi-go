@@ -69,7 +69,7 @@ SEED_DB=<true/false>
 
 > Set the `SEED_DB` environment variable to `true` to seed the database with sample data.
 
-#### Usage
+### Usage
 
 The Repo contains a `Makefile` which can be used to build and run the API locally.
 
