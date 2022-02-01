@@ -1,9 +1,12 @@
 services:
   goapp:
-    build: .
+    container_name: goapp
+    build: 
+      context: ..
+      dockerfile: ./docker/Dockerfile
     ports:
       - 8080:8080
-    env_file: .env
+    env_file: ../.env
     restart: on-failure
     volumes:
       - api:/usr/src/app/
@@ -13,6 +16,7 @@ services:
       - mongo
 
   mongo:
+    container_name: mongo
     image: mongo
     restart: always
     ports:
