@@ -5,7 +5,7 @@ The project introduces a new way of **File-Driven testing** in Golang, and new w
 
 Check them out:
 
-- [Testing](tests/main.go)
+- [Testing](test/main.go)
 - [MongoDB Indexing](utils/db.go)
 
 The API consists of three models:
