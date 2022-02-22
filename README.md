@@ -1,6 +1,12 @@
 ## ProductAPI
 
-ProductAPI is a RESTful API for managing products created as IDT.NET task
+ProductAPI is a RESTful API for managing products and their reviews.
+The project introduces a new way of **File-Driven testing** in Golang, and new way of **creating indexes** in MongoDB.
+
+Check them out:
+
+- [Testing](tests/main.go)
+- [MongoDB Indexing](utils/db.go)
 
 The API consists of three models:
 
